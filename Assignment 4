@@ -1,0 +1,144 @@
+#include <iostream>
+using namespace std;
+
+template <class T>
+struct node
+{
+	T Data;
+	node* next;
+	node(T val)						// Default Constructor
+	{
+		Data = val;
+		next = NULL;
+	}
+};
+
+template <class T>
+class List
+{
+	node<T>* head;
+	int currentNodes;
+public:
+	List()							// Default Constructor
+	{
+		head = NULL;
+		currentNodes = 0;
+	}
+
+	bool add(T val, int n)
+	{
+		if (n > currentNodes + 1)		// Return false if there are less nodes in the linked list 
+										// than the position given.
+		{
+			return false;
+		}
+		else
+		{
+			node<T>* temp = head;
+			if (temp == NULL)					// If linked List is empty
+			{
+				temp = new node<T>(val);
+				temp->next = NULL;
+				head = temp;
+				currentNodes++;
+				return true;
+			}
+
+			for (int i = 1; i < n - 1; i++)		// Traversing the linked list
+			{
+				temp = temp->next;
+			}
+
+			node<T>* tmp = temp->next;
+			temp->next = new node<T>(val);
+			temp->next->next = tmp;
+			currentNodes++;
+			return true;
+		}
+	}
+
+	T remove(int pos)
+	{
+		if (pos > currentNodes || pos == 0)		// Return false if there are less nodes in the linked list 
+												// than the position given.
+		{
+			return -1;							// return -1 if llinked list is empty
+		}
+		else
+		{
+			node<T>* temp = head;
+			for (int i = 1; i < pos - 1; i++)	// Traversing the linked list
+			{
+				temp = temp->next;
+			}
+			T element;
+			node<T>* tmp = temp->next->next;
+			element = temp->next->Data;
+			delete temp->next;
+			temp->next = tmp;
+			currentNodes--;
+			return element;
+		}
+	}
+
+	T get(int pos)
+	{
+		if (pos > currentNodes)		// Return false if there are less nodes in the linked list 
+									// than the position given.
+		{
+			return -1;
+		}
+		else
+		{
+			node<T>* temp = head;
+			for (int i = 1; i < pos - 1; i++)
+			{
+				temp = temp->next;
+			}
+			T element = temp->next->Data;
+			return element;
+		}
+	}
+
+	void Print()
+	{
+		node<T>* temp = head;
+		for (int i = 1; i <= currentNodes; i++)
+		{
+			cout << temp->Data;
+			if (temp->next != NULL)
+				cout << "->";
+			else
+				cout << endl;
+
+			temp = temp->next;
+		}
+	}
+
+	~List()									// Destructor
+	{
+		node<T>* ptr;
+
+		for (ptr = head; head; ptr = head)
+		{
+			head = head->next;
+			delete ptr;
+		}
+	}
+};
+
+int main()
+{
+	List<int> l1;
+	for (int i = 1, j = 1; j < 11; i += 10, j++)
+	{
+		l1.add(i, j);		// insterting i at jth position
+	}
+	l1.add(45, 3);												// Inserts 45 at 3rd position
+	cout <<"4th object is "<< l1.get(4) << "  " << endl;		// Print the object on the particular position
+	cout << "The List is ";
+	l1.Print();													// print the data
+	cout << l1.remove(12)<<" Was deleted"<<endl;				// Print The removed element
+	cout << "The List is "; 
+	l1.Print();													// print the data
+}
